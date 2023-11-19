@@ -1,6 +1,6 @@
 # Electrical Suffix Parser
 
-Parse suffixes used by electrical engineers. such as "K" or "m" as their associated exponent. The list of suffixes can be editted using the settings that can be loaded through JSON.
+Parse suffixes used by electrical engineers. such as "K" or "m" as their associated metric exponent. The list of suffixes can be editted using the settings that can be loaded through JSON.
 
 ## Console Usage
 
@@ -16,11 +16,72 @@ Console.WriteLine(parser.Convert(output, "F"));
 ```
 
 ## WPF Usage
-NEED TO FIX
 
---------------------------------------
+### Value Converter:
 
-App.xaml.cs file:
+It would be nice to have this in the library, but that requires more magic than I can muster. Its a Microsoft thing.
+
+Create a class file and throw this in there. Its usually a good idea to separate value converters into its own namespace. It makes things easier to find on the XAML side.
+
+```cs
+using System;
+using System.Globalization;
+using System.Windows.Data;
+
+using ElectricalSuffixParser.Models;
+using ElectricalSuffixParser.Parsers;
+
+namespace ProjectNamespace.Converters;
+
+public class SuffixConverter : IValueConverter
+{
+    // Un-Comment this line and delete the next line, when a custom suffix model is needed:
+    //private static SuffixParser parser { get; set; } = new(App.SuffixManager.Suffixes);
+
+    // Otherwise, this line creates the default suffix model:
+    private static SuffixParser parser { get; set; } = new(new());
+
+    public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is double output)
+        {
+            return parser.Convert(output, (string?)parameter);
+        }
+        return null;
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string input)
+        {
+            return parser.ParseInput(input);
+        }
+        return null;
+    }
+}
+```
+
+### XAML:
+
+```cs
+<Window
+    xmlns:conv="<path-to-namespace>"
+<Window.Resources>
+    <conv:SuffixConverter x:Key="SuffixConverter"/>
+</Window.Resources>
+
+<TextBox Text="{Binding Path=Value, Converter={StaticResource SuffixConverter}, ConverterParameter=R}"/>
+```
+
+### App.xaml.cs file:
+
+This section is for adding or modifying the suffix model. This saves the suffix model to a JSON file in the app data folder. can be ommited if desired.
+
+#### Default settings file path:
+```
+C:\Users\<user>\AppData\Local\<AppName>\Suffixes\Settings.json
+```
+
 ```cs
 public partial class App : Application
 {
@@ -52,42 +113,4 @@ public partial class App : Application
         base.OnExit(e);
     }
 }
-```
-
-Value Converter:
-```cs
-public class SuffixConverter : IValueConverter
-{
-    private static SuffixParser { get; set; } = new(App.SuffixManager.SuffixModel);
-
-    public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is string input)
-        {
-            return parser.ParseInput(input);
-        }
-        return null;
-    }
-
-    public object? ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is double output)
-        {
-            return parser.Convert(output);
-        }
-        return null;
-    }
-}
-```
-
-XAML:
-
-```cs
-<Window
-    
-<Window.Resources>
-    <
-</Window.Resources>
-
-<TextBox Text="{Binding Path=Resisitor, Converter={StaticResource }}"
 ```
