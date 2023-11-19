@@ -11,7 +11,10 @@ namespace ElectricalSuffixParser.Parsers
    public class SuffixParser
    {
       #region Local Props
-      private SuffixModel SuffixModel = new();
+      /// <summary>
+      /// Suffix data to use during conversion.
+      /// </summary>
+      public SuffixModel SuffixModel { get; set; }
       #endregion
 
       #region Constructors
@@ -29,6 +32,10 @@ namespace ElectricalSuffixParser.Parsers
          if (string.IsNullOrEmpty(input)) return null;
 
          double temp;
+         if (input.Length == 1)
+         {
+            if (double.TryParse(input, out temp)) return temp;
+         }
          if (char.IsLetter(input[^1]))
          {
             if (SuffixModel.InputExponentSuffixes.ContainsKey(input[^1]))
@@ -38,11 +45,15 @@ namespace ElectricalSuffixParser.Parsers
                   return temp * (double)Math.Pow(10, SuffixModel.InputExponentSuffixes[input[^1]]);
                }
             }
+            if (SuffixModel.UnitsWhitelist.Contains(input[^1]))
+            {
+               return ParseInput(input[0..^1]);
+            }
             if (double.TryParse(input[0..^1], out temp)) return temp;
          }
          else
          {
-            if (double.TryParse(input[0..^1], out temp)) return temp;
+            if (double.TryParse(input, out temp)) return temp;
          }
          return null;
       }
@@ -56,6 +67,7 @@ namespace ElectricalSuffixParser.Parsers
       public string? Convert(double? input, string? unitSuffix = null)
       {
          if (input is null) return null;
+         if (input == 0) return $"0{unitSuffix}";
 
          double value = (double)input;
          double abs = Math.Abs(value);
@@ -67,9 +79,9 @@ namespace ElectricalSuffixParser.Parsers
          }
          if (exponent < SuffixModel.InputMinExponent)
          {
-            return $"{MathHelper.ToExponent(value, -12):F}{SuffixModel.ExponentSuffixes[SuffixModel.InputMinExponent]}{unitSuffix}";
+            return $"{MathHelper.ToExponent(value, SuffixModel.InputMinExponent):F}{SuffixModel.ExponentSuffixes[SuffixModel.InputMinExponent]}{unitSuffix}";
          }
-         return $"{Math.Round(MathHelper.ToExponent((decimal)input, SuffixModel.InputExponentConvert[exponent]), 2):F}{SuffixModel.ExponentSuffixes[exponent]}{unitSuffix}";
+         return $"{Math.Round(MathHelper.ToExponent(value, SuffixModel.InputExponentConvert[exponent]), 2):F}{SuffixModel.ExponentSuffixes[exponent]}{unitSuffix}";
       }
       #endregion
 

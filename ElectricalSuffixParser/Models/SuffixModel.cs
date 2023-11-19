@@ -4,13 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using SettingsLibrary.Models;
+
 namespace ElectricalSuffixParser.Models
 {
-   public class SuffixModel : SettingsLibrary.Models.ISettingsModel
+   public class SuffixModel : ISettingsModel
    {
+      /// <summary>
+      /// --NOT USED--
+      /// </summary>
       public string SavePath { get; set; } = null!;
+      /// <summary>
+      /// --NOT USED--
+      /// </summary>
       public string LastSavePath { get; set; } = null!;
 
+      /// <summary>
+      /// Exponent to suffix conversion dictionary.
+      /// </summary>
       public Dictionary<int, string> ExponentSuffixes { get; set; } = new()
       {
          { 6, "M" },
@@ -34,6 +45,9 @@ namespace ElectricalSuffixParser.Models
          { -12, "p" },
       };
 
+      /// <summary>
+      /// Suffix to exponent conversion dictionary.
+      /// </summary>
       public Dictionary<char, int> InputExponentSuffixes { get; set; } = new()
       {
          { 'M', 6 },
@@ -48,6 +62,13 @@ namespace ElectricalSuffixParser.Models
          { 'P', -12 },
       };
 
+      /// <summary>
+      /// Exponent readability rounding conversion dictionary.
+      /// <para>
+      ///   <para>Example:</para>  
+      ///   Converts 0.1 or 1d (deca) to 100m (milli)
+      /// </para>
+      /// </summary>
       public Dictionary<int, int> InputExponentConvert { get; set; } = new()
       {
          { 6, 6 },
@@ -71,9 +92,23 @@ namespace ElectricalSuffixParser.Models
          { -12, -12 },
       };
 
+      /// <summary>
+      /// Highest exponent provided in the <see cref="InputExponentConvert"/> dictionary.
+      /// </summary>
       public int InputMaxExponent => InputExponentConvert.Keys.Max(x => x);
+
+      /// <summary>
+      /// Lowest exponent provided in the <see cref="InputExponentConvert"/> dictionary.
+      /// </summary>
       public int InputMinExponent => InputExponentConvert.Keys.Min(x => x);
 
+      /// <summary>
+      /// Special characters for converting units into the special unicode character instead of a basic letter.
+      /// <para>
+      ///   <para>Example:</para>
+      ///   Use "μ" instead of "u"
+      /// </para>
+      /// </summary>
       public Dictionary<string, string> SpecialChars = new()
       {
          { "micro", "μ" },
@@ -83,6 +118,21 @@ namespace ElectricalSuffixParser.Models
          { "pi", "π" },
          { "faren", "℉" },
          { "plusminus", "±" },
+      };
+
+      /// <summary>
+      /// Expandable list of units that the parser will step over when parsing.
+      /// <para/>
+      /// Characters not included here will cause the parser to output null.
+      /// </summary>
+      public List<char> UnitsWhitelist = new()
+      {
+         'F',
+         'R',
+         'H',
+         'Z',
+         'Ω',
+         'μ'
       };
    }
 }

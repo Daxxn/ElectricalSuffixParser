@@ -8,9 +8,9 @@ namespace ElectricalSuffixParser
 {
    public static class MathHelper
    {
-      public static decimal Pow10(int value)
+      public static decimal Pow10(int exp)
       {
-         return (decimal)Math.Pow(10, value);
+         return (decimal)Math.Pow(10, exp);
       }
 
       public static decimal ToExponent(decimal value, int ex)
@@ -20,7 +20,7 @@ namespace ElectricalSuffixParser
 
       public static double ToExponent(double value, int ex)
       {
-         return value * Math.Pow(10, value);
+         return value * Math.Pow(10, -ex);
       }
 
       public static int GetExponent(double value)

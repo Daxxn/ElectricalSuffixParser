@@ -8,7 +8,7 @@ using SettingsLibrary;
 
 namespace ElectricalSuffixParser.Models
 {
-   public static class SuffixList
+   public static class SuffixModelManager
    {
       public static SuffixModel Suffixes { get; set; } = new();
       public static void OnStartup(string parentAppName)
