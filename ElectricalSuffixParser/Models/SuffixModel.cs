@@ -8,6 +8,9 @@ using SettingsLibrary.Models;
 
 namespace ElectricalSuffixParser.Models
 {
+   /// <summary>
+   /// Suffix model used during parsing by the <see cref="Parsers.SuffixParser"/>
+   /// </summary>
    public class SuffixModel : ISettingsModel
    {
       /// <summary>

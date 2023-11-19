@@ -8,6 +8,9 @@ using ElectricalSuffixParser.Models;
 
 namespace ElectricalSuffixParser.Parsers
 {
+   /// <summary>
+   /// Object containing the logic for parsing the number suffixes.
+   /// </summary>
    public class SuffixParser
    {
       #region Local Props
@@ -18,6 +21,14 @@ namespace ElectricalSuffixParser.Parsers
       #endregion
 
       #region Constructors
+      /// <summary>
+      /// Default constructor using the default <see cref="SuffixModel"/>.
+      /// </summary>
+      public SuffixParser() => SuffixModel = new();
+      /// <summary>
+      /// Constructor using a custom <see cref="SuffixModel"/>.
+      /// </summary>
+      /// <param name="model">Custom suffix model.</param>
       public SuffixParser(SuffixModel model) => SuffixModel = model;
       #endregion
 
