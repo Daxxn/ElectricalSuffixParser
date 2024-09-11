@@ -8,7 +8,7 @@
 		<Title>Electrical Suffix Parser</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.0.1</Version>
+		<Version>1.1.0</Version>
 		<RepositoryUrl>https://github.com/Daxxn/ElectricalSuffixParser.git</RepositoryUrl>
 		<PackageTags>parser; electrical;</PackageTags>
 		<Description>Electrical suffix parser for console or WPF applications.</Description>

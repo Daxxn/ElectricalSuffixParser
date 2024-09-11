@@ -69,6 +69,37 @@ namespace ElectricalSuffixParser.Parsers
          return null;
       }
 
+      public decimal? ParseInputDecimal(string? input)
+      {
+         if (string.IsNullOrEmpty(input)) return null;
+
+         decimal temp;
+         if (input.Length == 1)
+         {
+            if (decimal.TryParse(input, out temp)) return temp;
+         }
+         if (char.IsLetter(input[^1]))
+         {
+            if (SuffixModel.InputExponentSuffixes.ContainsKey(input[^1]))
+            {
+               if (decimal.TryParse(input[0..^1], out temp))
+               {
+                  return temp * (decimal)Math.Pow(10, SuffixModel.InputExponentSuffixes[input[^1]]);
+               }
+            }
+            if (SuffixModel.UnitsWhitelist.Contains(input[^1]))
+            {
+               return ParseInputDecimal(input[0..^1]);
+            }
+            if (decimal.TryParse(input[0..^1], out temp)) return temp;
+         }
+         else
+         {
+            if (decimal.TryParse(input, out temp)) return temp;
+         }
+         return null;
+      }
+
       /// <summary>
       /// Match a floating point value with the closest matching suffix and create a string with that value.
       /// </summary>
@@ -82,6 +113,32 @@ namespace ElectricalSuffixParser.Parsers
 
          double value = (double)input;
          double abs = Math.Abs(value);
+         int exponent = MathHelper.GetExponent(abs);
+
+         if (exponent > SuffixModel.InputMaxExponent)
+         {
+            return $"{MathHelper.ToExponent(value, SuffixModel.InputMaxExponent):F}{SuffixModel.ExponentSuffixes[SuffixModel.InputMaxExponent]}{unitSuffix}";
+         }
+         if (exponent < SuffixModel.InputMinExponent)
+         {
+            return $"{MathHelper.ToExponent(value, SuffixModel.InputMinExponent):F}{SuffixModel.ExponentSuffixes[SuffixModel.InputMinExponent]}{unitSuffix}";
+         }
+         return $"{Math.Round(MathHelper.ToExponent(value, SuffixModel.InputExponentConvert[exponent]), 2):F}{SuffixModel.ExponentSuffixes[exponent]}{unitSuffix}";
+      }
+
+      /// <summary>
+      /// Match a floating point value with the closest matching suffix and create a string with that value.
+      /// </summary>
+      /// <param name="input"><see langword="decimal"/> high precision floating point value to convert.</param>
+      /// <param name="unitSuffix">Optional unit suffix.</param>
+      /// <returns>String of the converted value.</returns>
+      public string? ConvertDecimal(decimal? input, string? unitSuffix = null)
+      {
+         if (input is null) return null;
+         if (input == 0) return $"0{unitSuffix}";
+
+         decimal value = (decimal)input;
+         decimal abs = Math.Abs(value);
          int exponent = MathHelper.GetExponent(abs);
 
          if (exponent > SuffixModel.InputMaxExponent)

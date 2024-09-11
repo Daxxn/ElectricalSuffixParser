@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectricalSuffixParser
 {
-   public static class MathHelper
+   internal static class MathHelper
    {
       public static decimal Pow10(int exp)
       {
@@ -26,6 +26,11 @@ namespace ElectricalSuffixParser
       public static int GetExponent(double value)
       {
          return (int)Math.Floor(Math.Log10(value));
+      }
+
+      public static int GetExponent(decimal value)
+      {
+         return (int)Math.Floor(Math.Log10((double)value));
       }
    }
 }
